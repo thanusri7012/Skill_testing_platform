@@ -13,6 +13,7 @@ A Flutter-based app for creating, taking, and evaluating skill-based tests with 
     - Multiple Choice Questions (MCQs)
     - Simple coding quizzes
     - Debugging challenges
+    - Also, the users can edit and delete the tests using their pass keys.
   - Take tests and submit answers for evaluation.
 - **AI-Generated Personalized Feedback**:
   - After test submission, receive detailed feedback such as:
