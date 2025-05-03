@@ -13,7 +13,8 @@ A Flutter-based app for creating, taking, and evaluating skill-based tests with 
     - Multiple Choice Questions (MCQs)
     - Simple coding quizzes
     - Debugging challenges
-    - Also, the users can edit and delete the tests using their pass keys.
+    - Also, the users can edit and delete the tests using their pass keys.**(Pass Key : 1234)**
+    - The teacher created the test. If they want to delete or edit it, they can use their pass key to do so, ensuring that only the teacher who created it can make changes.
   - Take tests and submit answers for evaluation.
 - **AI-Generated Personalized Feedback**:
   - After test submission, receive detailed feedback such as:
