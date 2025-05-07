@@ -100,6 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width for responsive design
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -135,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -158,33 +161,42 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Your Tests',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                  Flexible(
+                                    child: Text(
+                                      'Your Tests',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
                                     ),
                                   ),
-                                  DropdownButton<String>(
-                                    value: _selectedCategory,
-                                    items: categories.map((category) {
-                                      return DropdownMenuItem<String>(
-                                        value: category,
-                                        child: Text(category, style: GoogleFonts.poppins()),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedCategory = value!;
-                                      });
-                                    },
+                                  const SizedBox(width: 10), // Add spacing between title and dropdown
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 120, // Limit the width of the dropdown
+                                    ),
+                                    child: DropdownButton<String>(
+                                      value: _selectedCategory,
+                                      items: categories.map((category) {
+                                        return DropdownMenuItem<String>(
+                                          value: category,
+                                          child: Text(category, style: GoogleFonts.poppins()),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedCategory = value!;
+                                        });
+                                      },
+                                      isExpanded: true, // Ensure the dropdown takes the constrained width
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 15),
                               if (filteredTests.isEmpty)
                                 Center(
                                   child: Text(
@@ -196,45 +208,61 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ...filteredTests.asMap().entries.map((entry) {
                                   final index = entry.key;
                                   final test = entry.value;
-                                  return Card(
-                                    elevation: 6,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: ListTile(
-                                      contentPadding: const EdgeInsets.all(16),
-                                      title: Text(
-                                        test.title,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black87,
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: Card(
+                                      elevation: 4,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: ListTile(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        title: Text(
+                                          test.title,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87,
+                                          ),
                                         ),
-                                      ),
-                                      subtitle: Text(
-                                        test.description,
-                                        style: GoogleFonts.poppins(color: Colors.grey[600]),
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit, color: Colors.blueAccent),
-                                            onPressed: () => _editTest(test),
+                                        subtitle: Padding(
+                                          padding: const EdgeInsets.only(top: 4),
+                                          child: Text(
+                                            test.description,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Colors.grey[600],
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete, color: Colors.redAccent),
-                                            onPressed: () => _deleteTest(test.id),
-                                          ),
-                                        ],
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 22),
+                                              padding: const EdgeInsets.all(4),
+                                              constraints: const BoxConstraints(),
+                                              onPressed: () => _editTest(test),
+                                            ),
+                                            const SizedBox(width: 8), // Add spacing between buttons
+                                            IconButton(
+                                              icon: const Icon(Icons.delete, color: Colors.redAccent, size: 22),
+                                              padding: const EdgeInsets.all(4),
+                                              constraints: const BoxConstraints(),
+                                              onPressed: () => _deleteTest(test.id),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/take_test',
+                                            arguments: test,
+                                          );
+                                        },
                                       ),
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          '/take_test',
-                                          arguments: test,
-                                        );
-                                      },
                                     ),
                                   ).animate().fadeIn(duration: 600.ms, delay: (index * 100).ms);
                                 }),
@@ -242,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
@@ -250,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -258,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Create New Test',
                             style: GoogleFonts.poppins(
+                              fontSize: 16,
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),

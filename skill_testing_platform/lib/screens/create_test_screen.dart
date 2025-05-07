@@ -91,6 +91,12 @@ class _CreateTestScreenState extends State<CreateTestScreen> {
             return;
           }
         }
+        // Normalize MCQ options to lowercase for case-insensitive comparison
+        final normalizedOptions = question.options!.map((option) => option.toLowerCase()).toList();
+        _questions[i] = _questions[i].copyWith(options: normalizedOptions);
+        // Debug log to confirm normalization
+        print('MCQ Question ${i + 1} options normalized to: $normalizedOptions');
+
         if (question.isMultipleChoice ?? false) {
           if (_correctOptionIndices[i]!.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -107,11 +113,50 @@ class _CreateTestScreenState extends State<CreateTestScreen> {
           }
         }
       } else if (question.type == 'coding' || question.type == 'debug') {
-        if (question.correctCode == null || question.correctCode!.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Question ${i + 1} (Coding/Debug) must have a correct answer')),
+        if (question.type == 'coding' && (question.isCodingQuizMultipleChoice ?? false)) {
+          // Handle multiple choice coding quiz
+          if (question.options == null || question.options!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Coding question ${i + 1} (Multiple Choice) must have at least one option')),
+            );
+            return;
+          }
+          for (var option in question.options!) {
+            if (option.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Coding question ${i + 1} (Multiple Choice) has empty options')),
+              );
+              return;
+            }
+          }
+          // Normalize options to lowercase for case-insensitive comparison
+          final normalizedOptions = question.options!.map((option) => option.toLowerCase()).toList();
+          _questions[i] = _questions[i].copyWith(options: normalizedOptions);
+          // Debug log to confirm normalization
+          print('Coding Question ${i + 1} (Multiple Choice) options normalized to: $normalizedOptions');
+
+          if (question.correctOptionIndex == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Coding question ${i + 1} (Multiple Choice) must have a correct option selected')),
+            );
+            return;
+          }
+        } else {
+          // Handle regular coding/debug question
+          if (question.correctCode == null || question.correctCode!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Question ${i + 1} (Coding/Debug) must have a correct answer')),
+            );
+            return;
+          }
+          // Normalize correctCode to lowercase for case-insensitive comparison
+          _questions[i] = _questions[i].copyWith(
+            correctCode: question.correctCode!.toLowerCase(),
           );
-          return;
+          // Debug log to confirm normalization
+          print('Coding/Debug Question ${i + 1} correctCode normalized to: ${question.correctCode}');
+          // Note: Ensure test-taking logic compares user answer case-insensitively
+          // e.g., userAnswer.toLowerCase() == question.correctCode
         }
       }
     }

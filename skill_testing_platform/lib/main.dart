@@ -15,12 +15,12 @@ void main() async {
   try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        apiKey: "AIzaSyCJT8tEwAbXCVPTQBJc_f5fEpZ_xcguLb0",
-        authDomain: "feedbackai-5c0b7.firebaseapp.com",
-        projectId: "feedbackai-5c0b7",
-        storageBucket: "feedbackai-5c0b7.firebasestorage.app",
-        messagingSenderId: "225743670427",
-        appId: "1:225743670427:web:dd1dac92983b6b7696ca3e",
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: "",
       ),
     );
   } catch (e) {
@@ -73,16 +73,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      debugShowCheckedModeBanner: false, // Disable the debug banner
+      debugShowCheckedModeBanner: false,
       home: const AuthWrapper(),
       routes: {
         '/auth': (context) => const AuthScreen(),
         '/home': (context) => const HomeScreen(),
         '/create_test': (context) => const CreateTestScreen(),
-        '/take_test': (context) {
-          final test = ModalRoute.of(context)!.settings.arguments as Test;
-          return TakeTestScreen();
-        },
+        '/take_test': (context) => const TakeTestScreen(),
         '/test_results': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return TestResultScreen(
@@ -91,7 +88,6 @@ class MyApp extends StatelessWidget {
             textControllers: args['textControllers'] as Map<int, TextEditingController>,
             score: args['score'] as int,
             total: args['total'] as int,
-            summarizedFeedback: args['summarizedFeedback'] as String,
           );
         },
         '/edit_test': (context) {
@@ -117,10 +113,8 @@ class AuthWrapper extends StatelessWidget {
           );
         }
         if (snapshot.hasData) {
-          // User is logged in, navigate to HomeScreen
           return const HomeScreen();
         } else {
-          // User is not logged in, navigate to AuthScreen
           return const AuthScreen();
         }
       },

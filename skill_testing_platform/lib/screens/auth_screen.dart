@@ -11,17 +11,19 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();//key for validating form fields
+  final _emailController = TextEditingController();//Controllers to manage user input in email & password fields.
   final _passwordController = TextEditingController();
-  final UserService _userService = UserService();
+  final UserService _userService = UserService();//Instance of UserService to create user profiles in Firestore.
   bool _isSignUp = false;
   bool _isLoading = false;
   String? _errorMessage;
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
+  late Animation<double> _fadeAnimation;//Used for fade-in animation of the screen on load.
 
   @override
+  //Initializes fade animation on screen load.
+  // Starts animation with _animationController.forward().
   void initState() {
     super.initState();
     _animationController = AnimationController(
@@ -34,6 +36,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     _animationController.forward();
   }
 
+  //Cleans up controllers when screen is destroyed.
   @override
   void dispose() {
     _emailController.dispose();
@@ -42,8 +45,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  Future<void> _authenticateWithEmail() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _authenticateWithEmail() async {//Called when user submits the form.
+    if (!_formKey.currentState!.validate()) return;//Checks if the form is valid using validators.
 
     setState(() {
       _isLoading = true;
